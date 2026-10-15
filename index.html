@@ -1,207 +1,24 @@
-<!DOCTYPE html>
-<html lang="ms">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AKADEMI DIGITAL - Nota KSSM T4 & T5</title>
-<style>
-:root{--navy:#102b4e;--blue:#234f7d;--pale:#eef4fb;--line:#dce5ef;--accent:#2b6cb0}
-*{box-sizing:border-box}
-body{margin:0;background:#f5f8fc;color:#263445;font:16px Arial,sans-serif;line-height:1.6}
-header{background:var(--navy);color:white;padding:22px max(20px,calc((100% - 1100px)/2));box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-header strong{font-size:25px;letter-spacing:1px}
-header p{margin:3px 0 0;color:#d9e8fa}
-main{max-width:1100px;margin:auto;padding:22px 16px 50px}
-.hero,.panel,.note{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.02)}
-h1,h2,h3{color:var(--navy);line-height:1.3}
-h1{font-size:clamp(25px,4vw,34px);margin:8px 0}
-h2{font-size:20px;border-bottom:2px solid var(--pale);padding-bottom:6px;margin-top:28px}
-.muted{color:#687789}
-input{width:100%;padding:14px;border:1px solid #cbd7e5;border-radius:11px;font-size:16px;margin-top:12px;outline:none;transition:border-color 0.2s}
-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(35,79,125,0.1)}
-.tabs{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap}
-button{font:inherit;cursor:pointer}
-.tab,.back{border:1px solid var(--line);background:white;color:var(--navy);padding:10px 16px;border-radius:10px;font-weight:bold;transition:all 0.2s}
-.tab.active{background:var(--navy);color:white;border-color:var(--navy)}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.subject{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;min-height:125px;color:var(--navy);transition:all 0.2s}
-.subject:hover,.chapter:hover{border-color:#7196bd;background:var(--pale);transform:translateY(-2px)}
-.subject span{display:block;font-size:25px;margin-bottom:8px}
-.subject strong{font-size:14px}
-.subject small{display:block;color:#687789;margin-top:8px}
-.chapterlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
-.chapter{padding:15px;background:white;border:1px solid var(--line);border-radius:12px;text-align:left;color:var(--navy);font-weight:bold;transition:all 0.2s}
-.back{margin-bottom:16px}
-.hidden{display:none!important}
-.tip{background:var(--pale);border-left:4px solid var(--blue);padding:14px;border-radius:5px;margin:18px 0}
-ul,ol{padding-left:20px}
-li{margin-bottom:8px}
-footer{text-align:center;color:#687789;padding:20px;font-size:13px}
-@media(max-width:800px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chapterlist{grid-template-columns:1fr}header strong{font-size:21px}.hero,.panel,.note{padding:18px}}
-@media(max-width:340px){.grid{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<header>
-  <strong>📘 AKADEMI DIGITAL</strong>
-  <p>Nota Ringkas &amp; Padat KSSM Tingkatan 4 &amp; 5</p>
-</header>
-<main>
-<section id="home">
-  <div class="hero">
-    <p><b> ULANG KAJI · FAHAM · CEMERLANG </b></p>
-    <h1>Nota Digital SPM &amp; KSSM.</h1>
-    <p class="muted">Pilih tingkatan, pilih subjek dan klik mana-mana bab untuk membaca nota lengkap.</p>
-    <input id="search" type="search" placeholder="Cari subjek (cth: Matematik, Sejarah, Biologi)..." aria-label="Cari subjek">
-  </div>
-  <div class="tabs">
-    <button class="tab active" data-grade="4" onclick="setGrade(4)">Tingkatan 4</button>
-    <button class="tab" data-grade="5" onclick="setGrade(5)">Tingkatan 5</button>
-  </div>
-  <h2 id="heading">Subjek Tingkatan 4</h2>
-  <p id="count" class="muted"></p>
-  <div class="grid" id="subjects"></div>
-  <p id="empty" class="hidden">Subjek tidak dijumpai. Cuba carian lain.</p>
-</section>
-
-<section id="subjectPage" class="hidden">
-  <button class="back" onclick="home()">← Kembali ke senarai subjek</button>
-  <div class="panel">
-    <h1 id="subjectTitle"></h1>
-    <p class="muted">Pilih bab untuk membaca nota ringkas.</p>
-    <input id="chapterSearch" type="search" placeholder="Cari bab..." aria-label="Cari bab" oninput="filterChapters()">
-    <div class="chapterlist" id="chapters"></div>
-  </div>
-</section>
-
-<section id="notePage" class="hidden">
-  <button class="back" onclick="backToSubject()">← Kembali ke senarai bab</button>
-  <article class="note" id="note"></article>
-</section>
-</main>
-<footer>AKADEMI DIGITAL · Nota Rujukan Pantas KSSM</footer>
-
-<script>
-const db = {
-  4: [
-    ["Bahasa Melayu", "📘", [
-      "Karangan: Teknik Menulis Pendahuluan & Penutup", "Tatabahasa: Kesalahan Ejaan & Imbuhan", 
-      "Rumusan: Panduan & Format Menjawab", "KOMSAS: Sinopsis & Tema Novel Tingkatan 4"
-    ]],
-    ["English", "📗", [
-      "Directed Writing Guide", "Continuous Writing Tips", "Literature Component: Poems & Novel Analysis"
-    ]],
-    ["Matematik", "📐", [
-      "Fungsi dan Persamaan Kuadratik", "Asas Nombor (Asas 2 hingga Asas 10)", 
-      "Penakulan Logik (Pernyataan & Hujah)", "Set (Gambar rajah Venn & Persilangan)", 
-      "Matematik Kewangan: Pengurusan Kewangan"
-    ]],
-    ["Biologi", "🧬", [
-      "Pengenalan kepada Biologi & Keselamatan Makmal", 
-      "Biologi Sel & Organisasi Sel", 
-      "Membran Plasma & Pengangkutan Merentasinya", 
-      "Komposisi Kimia Sel (Karbohidrat, Protein, Lipid, Enzim)"
-    ]],
-    ["Sejarah", "🏛️", [
-      "Warisan Negara Bangsa (Kesultanan Melayu Melaka)", 
-      "Bangkitnya Nasionalisme di Negara Kita", 
-      "Konflik Dunia dan Pendudukan Jepun", 
-      "Persekutuan Tanah Melayu 1948"
-    ]],
-    ["Kimia", "🧪", [
-      "Pengenalan kepada Kimia & Radas Makmal", 
-      "Jirim dan Struktur Atom", 
-      "Formula dan Persamaan Kimia", 
-      "Jadual Berkala Unsur"
-    ]]
-  ],
-  5: [
-    ["Bahasa Melayu", "📘", [
-      "Karangan Respons Terhad & Terbuka", "Novel Tingkatan 5: Perbandingan Watak & Perwatakan"
-    ]],
-    ["Matematik", "📐", [
-      "Ubahan (Ubahan Langsung & Songsang)", 
-      "Matriks (Pendaraban Matriks & Matriks Songsang)", 
-      "Kewangan: Insurans & Cukai Pendapatan"
-    ]],
-    ["Biologi", "🧬", [
-      "Organisasi Tisu Tumbuhan & Pertumbuhan", 
-      "Pernafasan & Pertukaran Gas dalam Tumbuhan", 
-      "Pewarisan Genetik (Hukum Mendel)"
-    ]],
-    ["Sejarah", "🏛️", [
-      "Persekutuan Tanah Melayu 1957 & Kemerdekaan", 
-      "Raja Berperlembagaan dan Demokrasi Berparlimen", 
-      "Malaysia dan Masyarakat Antarabangsa"
-    ]]
-  ]
-};
-
-let grade = 4, selected = null, selectedChapter = "";
-const $ = id => document.getElementById(id);
-
-function safe(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
-function setGrade(g) {
-  grade = g;
-  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", Number(b.dataset.grade) === g));
-  $("heading").textContent = "Subjek Tingkatan " + g;
-  render();
-}
-
-function render() {
-  const q = $("search").value.toLowerCase().trim();
-  const currentList = db[grade] || [];
-  const list = currentList.filter(s => s[0].toLowerCase().includes(q));
-  
-  $("subjects").innerHTML = "";
-  if(list.length === 0) {
-    $("empty").classList.remove("hidden");
-  } else {
-    $("empty").classList.add("hidden");
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Apakah nisbah fenotip F2 bagi kacukan monohibrid dominan lengkap?</li>
+<li>Bezakan genotip dan fenotip.</li>
+<li>Berikan contoh pewarisan pautan seks pada manusia.</li>
+</ol>;
   }
+  else {
+   body = defaultNote();
+  }
+ }
+ else {
+  body = defaultNote();
+ }
 
-  list.forEach(s => {
-    const b = document.createElement("button");
-    b.className = "subject";
-    b.innerHTML = `<span>${s[1]}</span><strong>${safe(s[0])}</strong><small>Tingkatan ${grade} · ${s[2].length} Bab Nota</small>`;
-    b.onclick = () => openSubject(s);
-    $("subjects").appendChild(b);
-  });
-  $("count").textContent = list.length + " subjek tersedia";
-}
-
-function show(id) {
-  ["home", "subjectPage", "notePage"].forEach(x => $(x).classList.toggle("hidden", x !== id));
-  window.scrollTo(0, 0);
-}
-
-function openSubject(s) {
-  selected = s;
-  $("subjectTitle").textContent = s[0] + " — Tingkatan " + grade;
-  $("chapterSearch").value = "";
-  renderChapters(s[2]);
-  show("subjectPage");
-}
-
-function renderChapters(chapters) {
-  $("chapters").innerHTML = "";
-  chapters.forEach((chapter, i) => {
-    const b = document.createElement("button");
-    b.className = "chapter";
-    b.textContent = "Bab " + (i + 1) + ": " + chapter + "  ›";
-    b.onclick = () => openNote(chapter, i);
-    $("chapters").appendChild(b);
-  });
-}
-
-function filterChapters() {
-  const q = $("chapterSearch").value.toLowerCase().trim();
-  const filtered = selected[2].filter(ch => ch.toLowerCase().includes(q));
-  renderChapters(filtered);
-}
-
-function openNote(chapter, index)
+ function defaultNote(){
+  return <p>Halaman ini disediakan untuk nota <b>${safe(selected[0])}</b>, Tingkatan ${grade}, bagi topik <b>${safe(chapter)}</b>.</p>
+  <h2>Rangka nota mengikut KSSM</h2>
+  <ul>
+   <li>Definisi dan istilah penting mengikut DSKP KPM</li>
+   <li>Konsep utama mengikut turutan standard pembelajaran</li>
+   <li>Contoh, rajah, formula atau jadual berkaitan</li>
+   <li>Aplikasi dalam kehidupan harian / isu kesihatan / teknologi</li>
+   <li>Soalan latihan & semakan kef

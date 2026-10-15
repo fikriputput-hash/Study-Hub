@@ -1,39 +1,41 @@
-
 <!DOCTYPE html>
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AKADEMI DIGITAL</title>
+<title>AKADEMI DIGITAL - Nota KSSM T4 & T5</title>
 <style>
-:root{--navy:#102b4e;--blue:#234f7d;--pale:#eef4fb;--line:#dce5ef}
+:root{--navy:#102b4e;--blue:#234f7d;--pale:#eef4fb;--line:#dce5ef;--accent:#2b6cb0}
 *{box-sizing:border-box}
 body{margin:0;background:#f5f8fc;color:#263445;font:16px Arial,sans-serif;line-height:1.6}
-header{background:var(--navy);color:white;padding:22px max(20px,calc((100% - 1100px)/2))}
+header{background:var(--navy);color:white;padding:22px max(20px,calc((100% - 1100px)/2));box-shadow:0 2px 8px rgba(0,0,0,0.1)}
 header strong{font-size:25px;letter-spacing:1px}
 header p{margin:3px 0 0;color:#d9e8fa}
 main{max-width:1100px;margin:auto;padding:22px 16px 50px}
-.hero,.panel,.note{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:20px}
+.hero,.panel,.note{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.02)}
 h1,h2,h3{color:var(--navy);line-height:1.3}
-h1{font-size:clamp(27px,5vw,38px);margin:8px 0}
+h1{font-size:clamp(25px,4vw,34px);margin:8px 0}
+h2{font-size:20px;border-bottom:2px solid var(--pale);padding-bottom:6px;margin-top:28px}
 .muted{color:#687789}
-input{width:100%;padding:14px;border:1px solid #cbd7e5;border-radius:11px;font-size:16px;margin-top:12px}
+input{width:100%;padding:14px;border:1px solid #cbd7e5;border-radius:11px;font-size:16px;margin-top:12px;outline:none;transition:border-color 0.2s}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(35,79,125,0.1)}
 .tabs{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap}
 button{font:inherit;cursor:pointer}
-.tab,.back{border:1px solid var(--line);background:white;color:var(--navy);padding:10px 16px;border-radius:10px;font-weight:bold}
-.tab.active{background:var(--navy);color:white}
+.tab,.back{border:1px solid var(--line);background:white;color:var(--navy);padding:10px 16px;border-radius:10px;font-weight:bold;transition:all 0.2s}
+.tab.active{background:var(--navy);color:white;border-color:var(--navy)}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.subject{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;min-height:125px;color:var(--navy)}
-.subject:hover,.chapter:hover{border-color:#7196bd;background:var(--pale)}
+.subject{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;min-height:125px;color:var(--navy);transition:all 0.2s}
+.subject:hover,.chapter:hover{border-color:#7196bd;background:var(--pale);transform:translateY(-2px)}
 .subject span{display:block;font-size:25px;margin-bottom:8px}
 .subject strong{font-size:14px}
 .subject small{display:block;color:#687789;margin-top:8px}
-.chapterlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.chapter{padding:15px;background:white;border:1px solid var(--line);border-radius:12px;text-align:left;color:var(--navy);font-weight:bold}
+.chapterlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.chapter{padding:15px;background:white;border:1px solid var(--line);border-radius:12px;text-align:left;color:var(--navy);font-weight:bold;transition:all 0.2s}
 .back{margin-bottom:16px}
 .hidden{display:none!important}
-.note h2{margin-top:24px}
 .tip{background:var(--pale);border-left:4px solid var(--blue);padding:14px;border-radius:5px;margin:18px 0}
+ul,ol{padding-left:20px}
+li{margin-bottom:8px}
 footer{text-align:center;color:#687789;padding:20px;font-size:13px}
 @media(max-width:800px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chapterlist{grid-template-columns:1fr}header strong{font-size:21px}.hero,.panel,.note{padding:18px}}
@@ -43,15 +45,15 @@ footer{text-align:center;color:#687789;padding:20px;font-size:13px}
 <body>
 <header>
   <strong>📘 AKADEMI DIGITAL</strong>
-  <p>Ruang pembelajaran Tingkatan 4 &amp; Tingkatan 5</p>
+  <p>Nota Ringkas &amp; Padat KSSM Tingkatan 4 &amp; 5</p>
 </header>
 <main>
 <section id="home">
   <div class="hero">
-    <p><b>BELAJAR · FAHAM · BERJAYA</b></p>
-    <h1>Ilmu di hujung jari.</h1>
-    <p class="muted">Pilih tingkatan, cari subjek dan klik bab untuk membuka nota.</p>
-    <input id="search" type="search" placeholder="Cari subjek..." aria-label="Cari subjek">
+    <p><b> ULANG KAJI · FAHAM · CEMERLANG </b></p>
+    <h1>Nota Digital SPM &amp; KSSM.</h1>
+    <p class="muted">Pilih tingkatan, pilih subjek dan klik mana-mana bab untuk membaca nota lengkap.</p>
+    <input id="search" type="search" placeholder="Cari subjek (cth: Matematik, Sejarah, Biologi)..." aria-label="Cari subjek">
   </div>
   <div class="tabs">
     <button class="tab active" data-grade="4" onclick="setGrade(4)">Tingkatan 4</button>
@@ -64,10 +66,11 @@ footer{text-align:center;color:#687789;padding:20px;font-size:13px}
 </section>
 
 <section id="subjectPage" class="hidden">
-  <button class="back" onclick="home()">← Kembali ke subjek</button>
+  <button class="back" onclick="home()">← Kembali ke senarai subjek</button>
   <div class="panel">
     <h1 id="subjectTitle"></h1>
-    <p class="muted">Pilih bab untuk membuka halaman nota.</p>
+    <p class="muted">Pilih bab untuk membaca nota ringkas.</p>
+    <input id="chapterSearch" type="search" placeholder="Cari bab..." aria-label="Cari bab" oninput="filterChapters()">
     <div class="chapterlist" id="chapters"></div>
   </div>
 </section>
@@ -77,108 +80,128 @@ footer{text-align:center;color:#687789;padding:20px;font-size:13px}
   <article class="note" id="note"></article>
 </section>
 </main>
-<footer>AKADEMI DIGITAL · Belajar sedikit demi sedikit, setiap hari.</footer>
+<footer>AKADEMI DIGITAL · Nota Rujukan Pantas KSSM</footer>
 
 <script>
-const data = [
-["Al-Syariah","⚖️",["Asas Syariah","Ibadah","Muamalat","Kehakiman"]],
-["Bahasa Melayu","📘",["Karangan","Tatabahasa","Pemahaman","KOMSAS","Rumusan"]],
-["Bahasa Arab","📗",["Mufradat","Nahu","Sarf","Insya'","Qiraah"]],
-["Biologi","🧬",["Pengenalan kepada Biologi","Biologi Sel","Membran Plasma","Komposisi Kimia Sel","Enzim dan Metabolisme","Pembahagian Sel","Respirasi Sel","Sistem Respirasi","Nutrisi","Pengangkutan","Keimunan","Koordinasi","Homeostasis"]],
-["Ekonomi","📈",["Pengenalan Ekonomi","Pasaran","Wang dan Bank","Pengeluaran","Pendapatan"]],
-["English","📗",["Reading","Writing","Grammar","Literature","Listening and Speaking"]],
-["Fizik","⚛️",["Pengukuran","Daya dan Gerakan","Kegravitian","Haba","Gelombang","Cahaya dan Optik"]],
-["Geografi","🌍",["Peta Topografi","Cuaca dan Iklim","Pengangkutan","Sumber Semula Jadi","Kegiatan Ekonomi"]],
-["Grafik Komunikasi Teknikal","📐",["Pengenalan Grafik","Peralatan Lukisan","Geometri","Unjuran","Lukisan Isometri"]],
-["Kesusasteraan Melayu Komunikatif","📚",["Prosa","Puisi","Drama","Cerpen","Novel"]],
-["Kesusasteraan Tamil","📚",["Puisi","Prosa","Kesusasteraan"]],
-["Kimia","🧪",["Pengenalan Kimia","Struktur Atom","Formula Kimia","Jadual Berkala","Ikatan Kimia","Asid dan Bes","Kadar Tindak Balas","Bahan Buatan"]],
-["Lughatul Arabiah Muasirah","📝",["Mufradat","Qiraah","Kitabah","Hiwar"]],
-["Matematik","📐",["Fungsi","Asas Nombor","Logik Matematik","Set","Graf","Ketaksamaan Linear","Kebarangkalian"]],
-["Matematik Tambahan","📊",["Fungsi","Fungsi Kuadratik","Indeks dan Logaritma","Janjang","Hukum Linear","Pembezaan","Pengamiran"]],
-["Pendidikan Islam","🕌",["Al-Quran","Hadis","Akidah","Fiqah","Sirah","Akhlak"]],
-["Pendidikan Moral","🤝",["Nilai Moral","Insan Bermoral","Norma Masyarakat","Moral dan Kenegaraan"]],
-["Pendidikan Quran Sunnah","📖",["Al-Quran","Ulum Al-Quran","Hadis","Ulum Hadis"]],
-["Pendidikan Syariah Islamiah","☪️",["Ibadah","Munakahat","Muamalat","Jinayat","Siasah Syar'iyyah"]],
-["Pendidikan Seni Visual","🎨",["Persepsi Seni","Eksplorasi Seni","Ekspresi Seni","Apresiasi Seni"]],
-["Perniagaan","💼",["Tujuan Perniagaan","Trend Perniagaan","Visi dan Misi","Pengurusan","Pemasaran"]],
-["Pertanian","🌱",["Tanaman","Tanah","Pengurusan Pertanian","Teknologi Pertanian"]],
-["Prinsip Perakaunan","🧮",["Pengenalan Perakaunan","Persamaan Perakaunan","Dokumen Perniagaan","Buku Catatan Pertama","Lejar","Imbangan Duga","Penyata Kewangan"]],
-["Reka Cipta","💡",["Penyelesaian Masalah","Reka Bentuk","Penghasilan Produk","Penilaian Produk"]],
-["Sains","🔬",["Rangsangan dan Gerak Balas","Respirasi","Pengangkutan","Kereaktifan Logam","Haba","Elektrik","Tenaga","Radioaktiviti"]],
-["Sains Komputer","💻",["Pengaturcaraan","Pangkalan Data","Algoritma","Rangkaian Komputer","Interaksi Manusia dan Komputer"]],
-["Sains Rumah Tangga","🏡",["Pemakanan","Pakaian","Pengurusan Keluarga","Penyediaan Makanan"]],
-["Sains Sukan","🏅",["Anatomi","Fisiologi","Kecergasan","Biomekanik","Psikologi Sukan"]],
-["Sains Tambahan","🔭",["Pengukuran","Daya dan Gerakan","Haba","Atom","Elektrik","Asid dan Bes"]],
-["Sejarah","🏛️",["Warisan Negara Bangsa","Nasionalisme","Konflik Dunia","Pendudukan Jepun","Persekutuan Tanah Melayu","Darurat","Kemerdekaan","Perlembagaan"]],
-["Tasawwur Islam","🌙",["Islam sebagai Ad-Din","Manusia sebagai Khalifah","Sistem Sosial Islam","Sistem Ekonomi Islam"]],
-["Usuluddin","📖",["Akidah","Tauhid","Pemikiran Islam","Akhlak"]],
-["Pendidikan Jasmani dan Pendidikan Kesihatan","🏃",["Kecergasan Fizikal","Kemahiran Sukan","Kesihatan Diri","Keselamatan"]]
-];
+const db = {
+  4: [
+    ["Bahasa Melayu", "📘", [
+      "Karangan: Teknik Menulis Pendahuluan & Penutup", "Tatabahasa: Kesalahan Ejaan & Imbuhan", 
+      "Rumusan: Panduan & Format Menjawab", "KOMSAS: Sinopsis & Tema Novel Tingkatan 4"
+    ]],
+    ["English", "📗", [
+      "Directed Writing Guide", "Continuous Writing Tips", "Literature Component: Poems & Novel Analysis"
+    ]],
+    ["Matematik", "📐", [
+      "Fungsi dan Persamaan Kuadratik", "Asas Nombor (Asas 2 hingga Asas 10)", 
+      "Penakulan Logik (Pernyataan & Hujah)", "Set (Gambar rajah Venn & Persilangan)", 
+      "Matematik Kewangan: Pengurusan Kewangan"
+    ]],
+    ["Biologi", "🧬", [
+      "Pengenalan kepada Biologi & Keselamatan Makmal", 
+      "Biologi Sel & Organisasi Sel", 
+      "Membran Plasma & Pengangkutan Merentasinya", 
+      "Komposisi Kimia Sel (Karbohidrat, Protein, Lipid, Enzim)"
+    ]],
+    ["Sejarah", "🏛️", [
+      "Warisan Negara Bangsa (Kesultanan Melayu Melaka)", 
+      "Bangkitnya Nasionalisme di Negara Kita", 
+      "Konflik Dunia dan Pendudukan Jepun", 
+      "Persekutuan Tanah Melayu 1948"
+    ]],
+    ["Kimia", "🧪", [
+      "Pengenalan kepada Kimia & Radas Makmal", 
+      "Jirim dan Struktur Atom", 
+      "Formula dan Persamaan Kimia", 
+      "Jadual Berkala Unsur"
+    ]]
+  ],
+  5: [
+    ["Bahasa Melayu", "📘", [
+      "Karangan Respons Terhad & Terbuka", "Novel Tingkatan 5: Perbandingan Watak & Perwatakan"
+    ]],
+    ["Matematik", "📐", [
+      "Ubahan (Ubahan Langsung & Songsang)", 
+      "Matriks (Pendaraban Matriks & Matriks Songsang)", 
+      "Kewangan: Insurans & Cukai Pendapatan"
+    ]],
+    ["Biologi", "🧬", [
+      "Organisasi Tisu Tumbuhan & Pertumbuhan", 
+      "Pernafasan & Pertukaran Gas dalam Tumbuhan", 
+      "Pewarisan Genetik (Hukum Mendel)"
+    ]],
+    ["Sejarah", "🏛️", [
+      "Persekutuan Tanah Melayu 1957 & Kemerdekaan", 
+      "Raja Berperlembagaan dan Demokrasi Berparlimen", 
+      "Malaysia dan Masyarakat Antarabangsa"
+    ]]
+  ]
+};
 
-let grade=4, selected=null, selectedChapter="";
-const $=id=>document.getElementById(id);
-function safe(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function setGrade(g){
- grade=g;
- document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",Number(b.dataset.grade)===g));
- $("heading").textContent="Subjek Tingkatan "+g;
- render();
+let grade = 4, selected = null, selectedChapter = "";
+const $ = id => document.getElementById(id);
+
+function safe(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
-function render(){
- const q=$("search").value.toLowerCase().trim();
- const list=data.filter(s=>s[0].toLowerCase().includes(q));
- $("subjects").innerHTML="";
- list.forEach(s=>{
-  const b=document.createElement("button");
-  b.className="subject";
-  b.innerHTML=`<span>${s[1]}</span><strong>${safe(s[0])}</strong><small>Tingkatan ${grade} · ${s[2].length} topik</small>`;
-  b.onclick=()=>openSubject(s);
-  $("subjects").appendChild(b);
- });
- $("count").textContent=list.length+" subjek";
- $("empty").classList.toggle("hidden",list.length>0);
+
+function setGrade(g) {
+  grade = g;
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", Number(b.dataset.grade) === g));
+  $("heading").textContent = "Subjek Tingkatan " + g;
+  render();
 }
-function show(id){["home","subjectPage","notePage"].forEach(x=>$(x).classList.toggle("hidden",x!==id));window.scrollTo(0,0);}
-function openSubject(s){
- selected=s;
- $("subjectTitle").textContent=s[0]+" — Tingkatan "+grade;
- $("chapters").innerHTML="";
- s[2].forEach((chapter,i)=>{
-  const b=document.createElement("button");
-  b.className="chapter";
-  b.textContent="Bab "+(i+1)+": "+chapter+"  ›";
-  b.onclick=()=>openNote(chapter,i);
-  $("chapters").appendChild(b);
- });
- show("subjectPage");
+
+function render() {
+  const q = $("search").value.toLowerCase().trim();
+  const currentList = db[grade] || [];
+  const list = currentList.filter(s => s[0].toLowerCase().includes(q));
+  
+  $("subjects").innerHTML = "";
+  if(list.length === 0) {
+    $("empty").classList.remove("hidden");
+  } else {
+    $("empty").classList.add("hidden");
+  }
+
+  list.forEach(s => {
+    const b = document.createElement("button");
+    b.className = "subject";
+    b.innerHTML = `<span>${s[1]}</span><strong>${safe(s[0])}</strong><small>Tingkatan ${grade} · ${s[2].length} Bab Nota</small>`;
+    b.onclick = () => openSubject(s);
+    $("subjects").appendChild(b);
+  });
+  $("count").textContent = list.length + " subjek tersedia";
 }
-function openNote(chapter,index){
- selectedChapter=chapter;
- let body="";
- if(selected[0]==="Biologi" && grade===4 && index===0){
- body=`<h2>Apakah Biologi?</h2>
- <p>Biologi ialah bidang sains yang mengkaji benda hidup dan proses kehidupan. Ahli biologi mengkaji struktur organisma, fungsi sistem hidup serta hubungan organisma dengan persekitarannya.</p>
- <h2>Bidang dalam Biologi</h2>
- <ul><li><b>Botani:</b> kajian tentang tumbuhan.</li><li><b>Zoologi:</b> kajian tentang haiwan.</li><li><b>Mikrobiologi:</b> kajian mikroorganisma.</li><li><b>Ekologi:</b> kajian hubungan organisma dengan persekitaran.</li><li><b>Genetik:</b> kajian pewarisan ciri.</li></ul>
- <h2>Keselamatan makmal</h2>
- <ul><li>Patuhi arahan guru dan baca label bahan.</li><li>Jangan makan atau minum di makmal.</li><li>Gunakan peralatan dengan cermat.</li><li>Laporkan kemalangan atau tumpahan kepada guru.</li><li>Buang bahan buangan mengikut arahan.</li></ul>
- <div class="tip"><b>Ingat:</b> Catat pemerhatian dengan teliti dan bezakan pemerhatian daripada inferens.</div>
- <h2>Uji kefahaman</h2><ol><li>Apakah yang dikaji dalam Biologi?</li><li>Nyatakan dua bidang dalam Biologi.</li><li>Berikan dua peraturan keselamatan makmal.</li></ol>`;
- }else{
- body=`<p>Halaman ini disediakan untuk nota <b>${safe(selected[0])}</b>, Tingkatan ${grade}, bagi topik <b>${safe(chapter)}</b>.</p>
- <h2>Rangka nota</h2>
- <ul><li>Definisi dan istilah penting bagi topik.</li><li>Konsep utama mengikut turutan pembelajaran.</li><li>Contoh, formula atau huraian yang berkaitan.</li><li>Soalan latihan dan semakan kefahaman.</li></ul>
- <div class="tip"><b>Nota:</b> Kandungan khusus untuk bab ini belum dimasukkan. Senarai topik ialah rangka awal dan perlu disemak dengan buku teks KSSM bagi tingkatan serta subjek yang tepat.</div>
- <h2>Petua belajar</h2><p>Baca topik daripada buku teks semasa, catat kata kunci, terangkan konsep menggunakan ayat sendiri dan jawab latihan untuk menguji kefahaman.</p>`;
- }
- $("note").innerHTML=`<p class="muted">AKADEMI DIGITAL · Tingkatan ${grade} · ${safe(selected[0])}</p><h1>${safe(chapter)}</h1>${body}`;
- show("notePage");
+
+function show(id) {
+  ["home", "subjectPage", "notePage"].forEach(x => $(x).classList.toggle("hidden", x !== id));
+  window.scrollTo(0, 0);
 }
-function home(){show("home");}
-function backToSubject(){show("subjectPage");}
-$("search").addEventListener("input",render);
-render();
-</script>
-</body>
-</html>
+
+function openSubject(s) {
+  selected = s;
+  $("subjectTitle").textContent = s[0] + " — Tingkatan " + grade;
+  $("chapterSearch").value = "";
+  renderChapters(s[2]);
+  show("subjectPage");
+}
+
+function renderChapters(chapters) {
+  $("chapters").innerHTML = "";
+  chapters.forEach((chapter, i) => {
+    const b = document.createElement("button");
+    b.className = "chapter";
+    b.textContent = "Bab " + (i + 1) + ": " + chapter + "  ›";
+    b.onclick = () => openNote(chapter, i);
+    $("chapters").appendChild(b);
+  });
+}
+
+function filterChapters() {
+  const q = $("chapterSearch").value.toLowerCase().trim();
+  const filtered = selected[2].filter(ch => ch.toLowerCase().includes(q));
+  renderChapters(filtered);
+}
+
+function openNote(chapter, index)

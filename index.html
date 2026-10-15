@@ -1,9 +1,493 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akademi Digital · Nota KSSM Tingkatan 4 & 5</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--accent:#38bdf8;--text:#f1f5f9;--muted:#94a3b8;--tip:#0ea5e9;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:1rem;max-width:720px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:.5rem}
+h2{font-size:1.2rem;margin:1.2rem 0 .5rem;color:var(--accent)}
+p,li{margin-bottom:.4rem}
+.muted{color:var(--muted);font-size:.9rem}
+.hidden{display:none!important}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.grade-btns button{background:var(--card);border:1px solid #334155;color:var(--text);padding:.4rem .9rem;border-radius:8px;cursor:pointer;font-weight:600}
+.grade-btns button.active{background:var(--accent);color:#0f172a}
+#search{width:100%;padding:.7rem 1rem;border-radius:10px;border:1px solid #334155;background:var(--card);color:var(--text);margin-bottom:1rem;font-size:1rem}
+.subject,.chapter{display:block;width:100%;text-align:left;background:var(--card);border:1px solid #334155;color:var(--text);padding:1rem;border-radius:12px;margin-bottom:.6rem;cursor:pointer;transition:.15s}
+.subject:hover,.chapter:hover{border-color:var(--accent);transform:translateY(-1px)}
+.subject span{display:block;font-size:.85rem;color:var(--muted)}
+.subject strong{font-size:1.1rem}
+.subject small{color:var(--muted)}
+.back{background:transparent;border:1px solid #475569;color:var(--muted);padding:.4rem .8rem;border-radius:8px;cursor:pointer;margin-bottom:1rem}
+.tip{background:rgba(14,165,233,.15);border-left:4px solid var(--tip);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0}
+ul,ol{padding-left:1.3rem}
+#note{padding-bottom:2rem}
+#empty{text-align:center;color:var(--muted);padding:2rem}
+table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.95rem}
+td,th{border:1px solid #334155;padding:.4rem .6rem;text-align:left}
+th{background:#1e293b}
+</style>
+</head>
+<body>
+<div id="home">
+ <header>
+  <div>
+   <h1>Akademi Digital</h1>
+   <p class="muted">Nota KSSM · Standard KPM</p>
+  </div>
+  <div class="grade-btns">
+   <button id="g4" class="active" onclick="setGrade(4)">Tingkatan 4</button>
+   <button id="g5" onclick="setGrade(5)">Tingkatan 5</button>
+  </div>
+ </header>
+ <input id="search" type="search" placeholder="Cari subjek atau topik...">
+ <p id="count" class="muted"></p>
+ <div id="subjects"></div>
+ <div id="empty" class="hidden">Tiada subjek dijumpai.</div>
+</div>
+
+<div id="subjectPage" class="hidden">
+ <button class="back" onclick="home()">← Kembali</button>
+ <h1 id="subjectTitle"></h1>
+ <div id="chapters"></div>
+</div>
+
+<div id="notePage" class="hidden">
+ <button class="back" onclick="backToSubject()">← Kembali ke bab</button>
+ <div id="note"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let grade = 4, selected = null, selectedChapter = "";
+
+const DATA = {
+ 4: [
+  ["Biologi", "🔬", [
+   "Pengenalan kepada Biologi dan Peraturan Makmal",
+   "Biologi Sel dan Organisasi Sel",
+   "Pergerakan Bahan Merentasi Membran Plasma",
+   "Komposisi Kimia dalam Sel",
+   "Metabolisme dan Enzim",
+   "Pembahagian Sel",
+   "Respirasi Sel",
+   "Sistem Respirasi dalam Manusia dan Haiwan",
+   "Nutrisi dan Sistem Pencernaan Manusia",
+   "Pengangkutan dalam Manusia dan Haiwan",
+   "Keimunan Manusia",
+   "Koordinasi dan Gerak Balas dalam Manusia",
+   "Homeostasis dan Sistem Urinari Manusia",
+   "Sokongan dan Pergerakan dalam Manusia dan Haiwan",
+   "Pembiakan Seks, Perkembangan dan Pertumbuhan dalam Manusia dan Haiwan"
+  ]],
+  ["Kimia", "⚗️", [
+   "Pengenalan kepada Kimia",
+   "Struktur Atom",
+   "Susunan Elektron dalam Atom",
+   "Jadual Berkala Unsur",
+   "Ikatan Kimia",
+   "Asid, Bes dan Garam",
+   "Kadar Tindak Balas",
+   "Teknologi dalam Kimia Industri"
+  ]],
+  ["Fizik", "⚛️", [
+   "Pengukuran",
+   "Daya dan Gerakan",
+   "Graviti",
+   "Haba",
+   "Gelombang",
+   "Cahaya dan Optik",
+   "Elektrik",
+   "Elektromagnet"
+  ]],
+  ["Matematik", "📐", [
+   "Fungsi Kuadratik",
+   "Fungsi dan Graf",
+   "Transformasi",
+   "Statistik",
+   "Kebarangkalian",
+   "Geometri",
+   "Trigonometri",
+   "Kalkulus Asas"
+  ]],
+  ["Matematik Tambahan", "➕", [
+   "Fungsi",
+   "Persamaan Kuadratik",
+   "Sistem Persamaan Linear",
+   "Indeks dan Logaritma",
+   "Progresi",
+   "Koordinat Linear",
+   "Vektor"
+  ]],
+  ["Sejarah", "📜", [
+   "Warisan Negara Bangsa",
+   "Kebangkitan Nasionalisme",
+   "Konflik Dunia dan Pendudukan Jepun",
+   "Era Pemerintahan British di Tanah Melayu",
+   "Kemerdekaan Tanah Melayu"
+  ]]
+ ],
+ 5: [
+  ["Biologi", "🔬", [
+   "Organisasi Tisu Tumbuhan dan Pertumbuhan",
+   "Struktur dan Fungsi Daun",
+   "Nutrisi dalam Tumbuhan",
+   "Pengangkutan dalam Tumbuhan",
+   "Gerak Balas dalam Tumbuhan",
+   "Pembiakan Seks dalam Tumbuhan Berbunga",
+   "Penyesuaian Tumbuhan pada Habitat",
+   "Biodiversiti",
+   "Ekosistem",
+   "Kelestarian Alam Sekitar",
+   "Pewarisan",
+   "Variasi",
+   "Teknologi Genetik"
+  ]],
+  ["Kimia", "⚗️", [
+   "Kadar Tindak Balas",
+   "Karbon dan Sebatiannya",
+   "Termokimia",
+   "Elektrokimia",
+   "Asid, Bes dan Garam (lanjutan)",
+   "Kimia dalam Industri"
+  ]],
+  ["Fizik", "⚛️", [
+   "Gelombang",
+   "Elektrik dan Magnet",
+   "Elektronik",
+   "Radioaktiviti",
+   "Tenaga Nuklear",
+   "Astronomi Asas"
+  ]],
+  ["Matematik", "📐", [
+   "Graf Fungsi",
+   "Transformasi",
+   "Statistik",
+   "Kebarangkalian",
+   "Geometri",
+   "Trigonometri",
+   "Kalkulus"
+  ]],
+  ["Matematik Tambahan", "➕", [
+   "Fungsi",
+   "Persamaan",
+   "Indeks & Logaritma",
+   "Progresi",
+   "Koordinat",
+   "Vektor",
+   "Kalkulus",
+   "Trigonometri Lanjutan"
+  ]],
+  ["Sejarah", "📜", [
+   "Pembinaan Negara dan Bangsa",
+   "Dasar dan Pembangunan Negara",
+   "Cabaran dan Harapan Negara",
+   "Malaysia dalam Hubungan Antarabangsa"
+  ]]
+ ]
+};
+
+function safe(t){return String(t).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+function setGrade(g){
+ grade=g;
+ $("g4").classList.toggle("active",g===4);
+ $("g5").classList.toggle("active",g===5);
+ render();
+}
+
+function render(){
+ const q=($("search").value||"").toLowerCase().trim();
+ const list=DATA[grade].filter(s=>!q||s[0].toLowerCase().includes(q)||s[2].some(c=>c.toLowerCase().includes(q)));
+ $("subjects").innerHTML="";
+ list.forEach(s=>{
+  const b=document.createElement("button");
+  b.className="subject";
+  b.innerHTML=`<span>${s[1]}</span><strong>${safe(s[0])}</strong><small>Tingkatan ${grade} · ${s[2].length} topik</small>`;
+  b.onclick=()=>openSubject(s);
+  $("subjects").appendChild(b);
+ });
+ $("count").textContent=list.length+" subjek";
+ $("empty").classList.toggle("hidden",list.length>0);
+}
+
+function show(id){["home","subjectPage","notePage"].forEach(x=>$(x).classList.toggle("hidden",x!==id));window.scrollTo(0,0);}
+
+function openSubject(s){
+ selected=s;
+ $("subjectTitle").textContent=s[0]+" — Tingkatan "+grade;
+ $("chapters").innerHTML="";
+ s[2].forEach((chapter,i)=>{
+  const b=document.createElement("button");
+  b.className="chapter";
+  b.textContent="Bab "+(i+1)+": "+chapter+"  ›";
+  b.onclick=()=>openNote(chapter,i);
+  $("chapters").appendChild(b);
+ });
+ show("subjectPage");
+}
+
+function openNote(chapter,index){
+ selectedChapter=chapter;
+ let body="";
+
+ // ========== BIOLOGI TINGKATAN 4 ==========
+ if(selected[0]==="Biologi" && grade===4){
+  if(index===0){ // Bab 1
+   body=`
+<h2>1.1 Bidang Biologi dan Kerjaya</h2>
+<p>Biologi ialah bidang sains yang mengkaji organisma hidup, struktur, fungsi, pertumbuhan, asal usul, evolusi dan interaksi dengan persekitaran.</p>
+<ul>
+<li><b>Botani</b> – kajian tumbuhan</li>
+<li><b>Zoologi</b> – kajian haiwan</li>
+<li><b>Mikrobiologi</b> – kajian mikroorganisma</li>
+<li><b>Ekologi</b> – hubungan organisma dengan persekitaran</li>
+<li><b>Genetik</b> – pewarisan ciri</li>
+<li><b>Fisiologi</b> – fungsi sistem dalam organisma</li>
+</ul>
+<p>Kerjaya berkaitan: doktor, ahli farmasi, ahli bioteknologi, ahli ekologi, guru biologi, saintis forensik.</p>
+
+<h2>1.2 Keselamatan dan Peraturan Makmal</h2>
+<ul>
+<li>Patuhi arahan guru dan baca label bahan kimia dengan teliti.</li>
+<li>Jangan makan, minum atau menyimpan makanan di makmal.</li>
+<li>Pakai peralatan pelindung diri (PPE): cot lab, gogal, sarung tangan bila perlu.</li>
+<li>Kendalikan radas dengan cermat; jangan guna radas yang retak.</li>
+<li>Laporkan sebarang kemalangan, tumpahan atau kerosakan segera kepada guru.</li>
+<li>Buang bahan buangan mengikut arahan (bahan kimia berbahaya tidak dibuang ke sinki).</li>
+<li>Basuh tangan selepas eksperimen.</li>
+</ul>
+
+<h2>1.3 Berkomunikasi dalam Biologi</h2>
+<p>Lukis rajah biologi dengan jelas, label dengan anak panah lurus, gunakan istilah saintifik yang tepat, dan catat pemerhatian secara objektif.</p>
+
+<h2>1.4 Penyiasatan Saintifik</h2>
+<p>Langkah: kenal pasti masalah → buat hipotesis → rancang eksperimen (pemboleh ubah dimanipulasi, bergerak balas, dimalarkan) → kumpul data → analisis → buat kesimpulan.</p>
+<div class="tip"><b>Ingat:</b> Bezakan <b>pemerhatian</b> (apa yang dilihat/diukur) dengan <b>inferens</b> (tafsiran berdasarkan pemerhatian).</div>
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Nyatakan tiga bidang dalam Biologi.</li>
+<li>Berikan empat peraturan keselamatan makmal.</li>
+<li>Apakah perbezaan antara pemerhatian dan inferens?</li>
+</ol>`;
+  }
+  else if(index===1){ // Bab 2
+   body=`
+<h2>2.1 Struktur dan Fungsi Sel</h2>
+<p>Sel ialah unit asas kehidupan. Semua organisma terdiri daripada sel.</p>
+<table>
+<tr><th>Organel</th><th>Fungsi</th></tr>
+<tr><td>Nukleus</td><td>Kawal aktiviti sel, mengandungi DNA</td></tr>
+<tr><td>Mitokondria</td><td>Tapak respirasi sel, hasilkan ATP</td></tr>
+<tr><td>Kloroplas</td><td>Tapak fotosintesis (sel tumbuhan)</td></tr>
+<tr><td>Ribosom</td><td>Sintesis protein</td></tr>
+<tr><td>Jalinan endoplasma</td><td>Pengangkutan bahan dalam sel</td></tr>
+<tr><td>Alat Golgi</td><td>Ubah suai, bungkus & hantar protein/lipid</td></tr>
+<tr><td>Lisosom</td><td>Cerna bahan (sel haiwan)</td></tr>
+<tr><td>Vakuol</td><td>Simpan air, nutrien, bahan buangan</td></tr>
+<tr><td>Dinding sel</td><td>Sokongan & bentuk (sel tumbuhan – selulosa)</td></tr>
+<tr><td>Membran plasma</td><td>Kawal pergerakan bahan masuk/keluar sel</td></tr>
+</table>
+<p><b>Perbezaan sel haiwan vs sel tumbuhan:</b></p>
+<ul>
+<li>Sel tumbuhan: ada dinding sel, kloroplas, vakuol besar</li>
+<li>Sel haiwan: tiada dinding sel & kloroplas, vakuol kecil/tiada, ada sentriol</li>
+</ul>
+
+<h2>2.2 & 2.3 Proses Hidup Organisma Unisel & Multisel</h2>
+<p>Organisma unisel (cth: Amoeba, Paramecium) menjalankan semua proses hidup dalam satu sel. Organisma multisel mempunyai sel khusus yang membentuk tisu, organ dan sistem.</p>
+
+<h2>2.4 Aras Organisasi</h2>
+<p>Sel → Tisu → Organ → Sistem organ → Organisma</p>
+<div class="tip"><b>Contoh:</b> Sel otot → tisu otot → jantung (organ) → sistem peredaran → manusia.</div>
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Nyatakan fungsi mitokondria dan kloroplas.</li>
+<li>Berikan tiga perbezaan antara sel haiwan dan sel tumbuhan.</li>
+<li>Susun aras organisasi daripada paling mudah ke paling kompleks.</li>
+</ol>`;
+  }
+  else if(index===2){ // Bab 3
+   body=`
+<h2>3.1 Struktur Membran Plasma</h2>
+<p>Model <b>cecair-mosaik</b> (Singer & Nicolson): dwilapis fosfolipid dengan protein tertanam. Kepala fosfolipid bersifat hidrofilik, ekor hidrofobik.</p>
+
+<h2>3.2 Konsep Pergerakan Bahan</h2>
+<ul>
+<li><b>Resapan mudah</b> – dari kepekatan tinggi ke rendah, tiada tenaga, melalui dwilapis lipid (O₂, CO₂)</li>
+<li><b>Resapan berbantu</b> – melalui protein saluran/pembawa, tiada tenaga (glukosa, asid amino)</li>
+<li><b>Osmosis</b> – pergerakan air merentasi membran separa telap dari keupayaan air tinggi ke rendah</li>
+<li><b>Pengangkutan aktif</b> – melawan kecerunan kepekatan, memerlukan tenaga ATP & protein pembawa (ion Na⁺/K⁺)</li>
+</ul>
+
+<h2>3.3 Dalam Organisma Hidup</h2>
+<p>Contoh: penyerapan glukosa di vilus usus (pengangkutan aktif), pertukaran gas di alveolus (resapan), kemasukan air ke sel akar (osmosis).</p>
+
+<div class="tip"><b>Istilah penting:</b> Hipotonik (keupayaan air tinggi), Hipertonik (keupayaan air rendah), Isotonik (keupayaan air sama). Sel haiwan dalam larutan hipotonik boleh lisis; sel tumbuhan menjadi turgid.</div>
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Bezakan resapan mudah dengan pengangkutan aktif.</li>
+<li>Apakah yang berlaku kepada sel haiwan dalam larutan hipotonik?</li>
+<li>Nyatakan dua contoh osmosis dalam tumbuhan.</li>
+</ol>`;
+  }
+  else if(index===4){ // Bab 5 Metabolisme & Enzim
+   body=`
+<h2>5.1 Metabolisme</h2>
+<p>Metabolisme = semua tindak balas kimia dalam sel. Terbahagi kepada:</p>
+<ul>
+<li><b>Anabolisme</b> – bina molekul kompleks (fotosintesis, sintesis protein)</li>
+<li><b>Katabolisme</b> – pecahkan molekul kompleks (respirasi, pencernaan)</li>
+</ul>
+
+<h2>5.2 Enzim</h2>
+<p>Enzim ialah pemangkin biologi (kebanyakannya protein) yang mempercepatkan tindak balas dengan menurunkan tenaga pengaktifan.</p>
+<ul>
+<li>Spesifik terhadap substrat (model kunci-dan-kunci / aruhan-muai)</li>
+<li>Boleh diguna semula</li>
+<li>Dipengaruhi oleh suhu, pH, kepekatan enzim & substrat</li>
+</ul>
+<p><b>Suhu optimum</b> manusia ≈ 37°C. Melebihi suhu tertentu enzim terdenaturasi.</p>
+<p><b>pH optimum</b> berbeza: pepsin (pH 1.5–2.5), amilase air liur (pH 6.8–7.0), tripsin (pH 8–9).</p>
+
+<h2>5.3 Aplikasi Enzim</h2>
+<ul>
+<li>Industri makanan: rennet (keju), protease (tenderiser daging)</li>
+<li>Detergen: enzim pencuci noda</li>
+<li>Perubatan: enzim dalam ujian diagnostik</li>
+</ul>
+<div class="tip"><b>Faktor yang menjejaskan enzim:</b> suhu tinggi → denaturasi; pH melampau → ubah bentuk tapak aktif; perencat kompetitif & bukan kompetitif.</div>
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Apakah perbezaan anabolisme dan katabolisme?</li>
+<li>Mengapa enzim dikatakan spesifik?</li>
+<li>Nyatakan kesan suhu tinggi terhadap enzim.</li>
+</ol>`;
+  }
+  else if(index===6){ // Bab 7 Respirasi Sel
+   body=`
+<h2>7.1 Penghasilan Tenaga</h2>
+<p>Respirasi sel menukarkan tenaga kimia dalam glukosa kepada ATP.</p>
+<p><b>Persamaan keseluruhan respirasi aerob:</b></p>
+<p>C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + tenaga (ATP) + haba</p>
+
+<h2>7.2 Respirasi Aerob</h2>
+<ol>
+<li><b>Glikolisis</b> (sitoplasma) – glukosa → 2 asid piruvik + 2 ATP bersih + NADH</li>
+<li><b>Kitar Krebs</b> (matriks mitokondria) – asid piruvik dioksidakan, hasilkan CO₂, NADH, FADH₂, 2 ATP</li>
+<li><b>Rantaian pengangkutan elektron</b> (krista mitokondria) – NADH & FADH₂ hasilkan ~34 ATP, O₂ sebagai penerima elektron akhir → air</li>
+</ol>
+<p>Jumlah anggaran: 36–38 ATP setiap glukosa.</p>
+
+<h2>7.3 Fermentasi (Respirasi Anaerob)</h2>
+<ul>
+<li><b>Fermentasi alkohol</b> (yis): glukosa → etanol + CO₂ + 2 ATP</li>
+<li><b>Fermentasi asid laktik</b> (otot manusia): glukosa → asid laktik + 2 ATP</li>
+</ul>
+<div class="tip"><b>Perbandingan:</b> Respirasi aerob hasilkan lebih banyak ATP dan produk akhir tidak toksik; fermentasi berlaku tanpa oksigen tetapi kurang cekap.</div>
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Tulis persamaan respirasi aerob.</li>
+<li>Di manakah kitar Krebs berlaku?</li>
+<li>Berapa ATP dihasilkan dalam fermentasi?</li>
+</ol>`;
+  }
+  else {
+   body = defaultNote();
+  }
+ }
+
+ // ========== BIOLOGI TINGKATAN 5 ==========
+ else if(selected[0]==="Biologi" && grade===5){
+  if(index===0){ // Bab 1 T5
+   body=`
+<h2>1.1 Organisasi Tisu Tumbuhan</h2>
+<p>Tisu tumbuhan dibahagikan kepada:</p>
+<ul>
+<li><b>Tisu meristem</b> – sel yang aktif membahagi (meristem apeks, meristem lateral/kambium)</li>
+<li><b>Tisu kekal</b> – tisu epidermis, tisu asas (parenkima, kolenkima, sklerenkima), tisu vaskular (xilem & floem)</li>
+</ul>
+<table>
+<tr><th>Tisu</th><th>Ciri & Fungsi</th></tr>
+<tr><td>Parenkima</td><td>Sel berdinding nipis, simpan makanan, fotosintesis (jika ada kloroplas)</td></tr>
+<tr><td>Kolenkima</td><td>Dinding menebal di sudut, sokongan fleksibel</td></tr>
+<tr><td>Sklerenkima</td><td>Dinding tebal berlignin, sokongan & kekuatan</td></tr>
+<tr><td>Xilem</td><td>Angkut air & garam mineral, sokongan</td></tr>
+<tr><td>Floem</td><td>Angkut bahan makanan (sukrosa)</td></tr>
+</table>
+
+<h2>1.2 Tisu Meristem dan Pertumbuhan</h2>
+<ul>
+<li><b>Pertumbuhan primer</b> – pemanjangan pucuk & akar (meristem apeks)</li>
+<li><b>Pertumbuhan sekunder</b> – penebalan batang & akar (kambium vaskular & kambium gabus)</li>
+</ul>
+
+<h2>1.3 Lengkung Pertumbuhan</h2>
+<p>Lengkung pertumbuhan sigmoid: fasa lag → fasa log (pesat) → fasa pegun → fasa penuaan.</p>
+<div class="tip"><b>Faktor pertumbuhan:</b> cahaya, air, suhu, nutrien, hormon tumbuhan (auksin, giberelin, sitokinin).</div>
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Bezakan pertumbuhan primer dan sekunder.</li>
+<li>Nyatakan fungsi xilem dan floem.</li>
+<li>Apakah fasa dalam lengkung pertumbuhan sigmoid?</li>
+</ol>`;
+  }
+  else if(index===3){ // Bab 4 Pengangkutan Tumbuhan
+   body=`
+<h2>4.1 Tisu Vaskular</h2>
+<p>Xilem (trakeid & salur xilem) – angkut air & mineral dari akar ke daun. Floem (tiub tapis & sel rakan) – angkut hasil fotosintesis.</p>
+
+<h2>4.2 Pengangkutan Air dan Garam Mineral</h2>
+<ul>
+<li><b>Tekanan akar</b> – tolak air ke atas pada akar</li>
+<li><b>Daya kapilari</b> – lekatan & kesatuan molekul air dalam xilem</li>
+<li><b>Tarikan transpirasi</b> – daya utama; kehilangan air di daun menarik lajur air ke atas (teori kesatuan-lekatan-tarikan)</li>
+</ul>
+
+<h2>4.3 Translokasi</h2>
+<p>Pengangkutan bahan organik (sukrosa) melalui floem dari sumber (daun) ke sinki (akar, buah, ubi) secara aktif (hipotesis aliran tekanan / model Münch).</p>
+
+<h2>4.4 Fitoremediasi</h2>
+<p>Penggunaan tumbuhan untuk membersihkan persekitaran tercemar (logam berat, bahan organik).</p>
+<div class="tip"><b>Faktor mempengaruhi kadar transpirasi:</b> keamatan cahaya, suhu, kelembapan, pergerakan udara, keluasan permukaan daun.</div>
+<h2>Uji Kefahaman</h2>
+<ol>
+<li>Nyatakan tiga mekanisme pengangkutan air dalam xilem.</li>
+<li>Apakah perbezaan xilem dan floem?</li>
+<li>Berikan satu contoh fitoremediasi.</li>
+</ol>`;
+  }
+  else if(index===10){ // Bab 11 Pewarisan
+   body=`
+<h2>11.1 Pewarisan Monohibrid</h2>
+<p>Kajian pewarisan satu ciri. Undang-undang pengasingan Mendel: alel berpisah semasa pembentukan gamet.</p>
+<p>Contoh: Kacukan tumbuhan kacang tinggi (TT) dengan kerdil (tt) → F1 semua tinggi (Tt) → F2 nisbah 3 tinggi : 1 kerdil.</p>
+
+<h2>11.2 Pewarisan Dihibrid</h2>
+<p>Dua ciri diwarisi serentak. Undang-undang penggabungan bebas → nisbah fenotip F2 = 9:3:3:1 (jika kedua-dua sifat dominan lengkap).</p>
+
+<h2>11.3 Gen dan Alel</h2>
+<ul>
+<li><b>Gen</b> – unit pewarisan pada kromosom</li>
+<li><b>Alel</b> – bentuk alternatif sesuatu gen</li>
+<li><b>Genotip</b> – komposisi genetik (TT, Tt, tt)</li>
+<li><b>Fenotip</b> – ciri yang dapat dilihat</li>
+<li>Dominan vs resesif; homozigot vs heterozigot</li>
+</ul>
+
+<h2>11.4 Pewarisan Manusia</h2>
+<p>Contoh: kumpulan darah ABO (alel berganda), buta warna & hemofilia (pautan seks X).</p>
+<div class="tip"><b>Petua:</b> Gunakan petak Punnett untuk meramal nisbah genotip dan fenotip. Ingat alel ditulis dengan huruf yang sama (T/t).</div>
 <h2>Uji Kefahaman</h2>
 <ol>
 <li>Apakah nisbah fenotip F2 bagi kacukan monohibrid dominan lengkap?</li>
 <li>Bezakan genotip dan fenotip.</li>
 <li>Berikan contoh pewarisan pautan seks pada manusia.</li>
-</ol>;
+</ol>`;
   }
   else {
    body = defaultNote();
@@ -14,11 +498,30 @@
  }
 
  function defaultNote(){
-  return <p>Halaman ini disediakan untuk nota <b>${safe(selected[0])}</b>, Tingkatan ${grade}, bagi topik <b>${safe(chapter)}</b>.</p>
+  return `<p>Halaman ini disediakan untuk nota <b>${safe(selected[0])}</b>, Tingkatan ${grade}, bagi topik <b>${safe(chapter)}</b>.</p>
   <h2>Rangka nota mengikut KSSM</h2>
   <ul>
    <li>Definisi dan istilah penting mengikut DSKP KPM</li>
    <li>Konsep utama mengikut turutan standard pembelajaran</li>
    <li>Contoh, rajah, formula atau jadual berkaitan</li>
    <li>Aplikasi dalam kehidupan harian / isu kesihatan / teknologi</li>
-   <li>Soalan latihan & semakan kef
+   <li>Soalan latihan & semakan kefahaman (KBAT)</li>
+  </ul>
+  <div class="tip"><b>Nota:</b> Kandungan penuh untuk bab ini sedang disediakan mengikut buku teks KSSM dan DSKP. Gunakan buku teks rasmi KPM sebagai rujukan utama sementara itu.</div>
+  <h2>Petua belajar</h2>
+  <p>Baca topik dalam buku teks, buat peta konsep, terangkan dengan ayat sendiri, dan jawab soalan latihan untuk menguji kefahaman.</p>`;
+ }
+
+ $("note").innerHTML=`<p class="muted">AKADEMI DIGITAL · KSSM Tingkatan ${grade} · ${safe(selected[0])}</p>
+ <h1>${safe(chapter)}</h1>${body}`;
+ show("notePage");
+}
+
+function home(){show("home");}
+function backToSubject(){show("subjectPage");}
+
+$("search").addEventListener("input",render);
+render();
+</script>
+</body>
+</html>
